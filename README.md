@@ -148,18 +148,72 @@ a cada fase):
    associada à baixa utilização de PRB — reforçando que essas janelas são seguras para uma
    política de economia simulada.
 
+## Recomendação operacional e política A1 (dry-run)
+
+**Regra de decisão aplicada** (limiar, sem ML sofisticado — suficiente para o escopo da
+disciplina), em `notebooks/03_recomendacao_a1.ipynb`:
+
+```
+candidatar_economia(fase) = FBC(fase) >= 90%  AND  Delay_bc(fase) <= limiar_delay_aceitavel
+```
+
+`limiar_delay_aceitavel` = delay médio da fase `stress` nesta amostra (161,98 ms), usado como
+teto conservador: se o delay dentro da baixa carga superasse isso, a baixa carga deixaria de
+ser "folga" para virar sinal de degradação.
+
+**Resultado por fase:**
+
+| Fase | FBC | Delay_bc | Decisão |
+|---|---|---|---|
+| baseline | 100,0% | 55,25 ms | `apply` |
+| stress | 1,7% | 134,79 ms (n=1) | `do_not_apply` |
+| recovery | 95,0% | 81,21 ms | `apply` |
+
+**Recomendação textual:** nas janelas com FBC ≥ 90% e delay dentro do limiar (`baseline` e
+`recovery`), recomenda-se abrir uma **política A1 candidata de economia de energia em
+dry-run** — uma intenção simulada de redução de uso de rádio nessas janelas, sem qualquer
+atuação física na RAN. Na fase `stress`, a recomendação é **não acionar** a política: a célula
+está predominantemente em carga alta, e o único ponto em baixa carga é um outlier pontual, não
+uma janela de oportunidade real.
+
+**Artefato dry-run:** `derived/decision_g6.json` — sempre com `actuation.mode = "emulate"`;
+nunca `AI_POLICY_COMMIT=1` (reservado a demonstração docente). Estrutura inspirada no
+`decision.json`/`model.json` oficiais do dataset (`policy_id`, `policytype_id`, `ric_id`,
+`service_id`, `scope`), com conteúdo próprio do G6 (`energySavingIntent`, fases candidatas e
+excluídas, racional da decisão).
+
+## Limitações
+
+- **RFSIM ≠ rede real:** telemetria sintética de laboratório (OpenAirInterface RFSIM), não
+  tráfego de campo.
+- **Amostra curta e único run:** 100 amostras, 1 único `run_id` (`ue-tp-20260804-174422`) —
+  sem repetição estatística entre execuções.
+- **Poucos UEs:** o lab opera tipicamente com um UE por amostra; agregações "por fase" não
+  representam uma célula com múltiplos usuários reais.
+- **Sem atuação física na RAN:** qualquer política A1 aqui é dry-run
+  (`actuation.mode = "emulate"`); não há redução real de potência de RU.
+- **Privacidade/ética:** dados sintéticos, sem informação pessoal; uso exclusivamente
+  acadêmico neste módulo.
+- **O que o lab não mede:** consumo de energia real — FBC é um proxy de oportunidade baseado
+  em uso de PRB, não uma medição de Watts (ver "O que os indicadores NÃO provam").
+
 ## Estrutura da pasta
 
 ```
 analise-de-dados-aplicada-a-redes-de-telecomunicacoes/
   README.md
   notebooks/
-    01_etl_kpm.ipynb     # Extract-Transform-Load + QC + coluna baixa_carga
-    02_eda_kpm.ipynb     # 2 consultas, indicadores preliminares/formais, 1 gráfico por KPI/KQI
+    01_etl_kpm.ipynb          # Extract-Transform-Load + QC + coluna baixa_carga
+    02_eda_kpm.ipynb          # 2 consultas, indicadores preliminares/formais, 1 gráfico por KPI/KQI
+    03_recomendacao_a1.ipynb  # regra de decisão + política A1 candidata em dry-run
   figures/
     01_kpi1_prb_janela_temporal.png       # gráfico dedicado ao KPI 1
     02_kqi2_qualidade_janela_temporal.png # gráfico dedicado ao KQI 2
   derived/
     kpm_features.csv     # tabela de features com coluna baixa_carga
     etl_qc.json           # relatório de qualidade do ETL
+    decision_g6.json      # política A1 candidata em dry-run (actuation.mode = "emulate")
+  slides/
+    slides-g6.md          # roteiro/conteúdo da apresentação (fonte, formato Marp)
+    slides-g6.pptx        # apresentação pronta para a Aula 06 (PowerPoint)
 ```

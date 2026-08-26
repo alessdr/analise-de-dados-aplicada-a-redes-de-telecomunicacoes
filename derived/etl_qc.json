@@ -14,7 +14,7 @@
   "duplicated_rows": 0,
   "timezone": "UTC (ingested_at em ISO 8601 com sufixo +00:00)",
   "limiar_prb_baixa_carga": 10.0,
-  "generated_at": "2026-08-26T01:00:28.361888+00:00",
+  "generated_at": "2026-08-26T21:53:55.634231+00:00",
   "ok_has_baseline_stress": true,
   "ok_ue_thp_nonneg": true
 }

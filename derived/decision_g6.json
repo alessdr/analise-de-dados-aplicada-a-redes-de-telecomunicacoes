@@ -1,0 +1,76 @@
+{
+  "actuation": {
+    "mode": "emulate",
+    "real": {}
+  },
+  "evaluation": {
+    "rule": "FBC(fase) >= 90% AND Delay_bc(fase) <= limiar_delay_aceitavel",
+    "limiar_fbc_pct": 90.0,
+    "limiar_delay_aceitavel_ms": 161.98,
+    "por_fase": [
+      {
+        "phase": "baseline",
+        "fbc_pct": 100.0,
+        "delay_bc_ms": 55.25,
+        "thp_bc_mbps": 3.72,
+        "n_baixa_carga": 20,
+        "decision": "apply"
+      },
+      {
+        "phase": "stress",
+        "fbc_pct": 1.7,
+        "delay_bc_ms": 134.79,
+        "thp_bc_mbps": 15.16,
+        "n_baixa_carga": 1,
+        "decision": "do_not_apply"
+      },
+      {
+        "phase": "recovery",
+        "fbc_pct": 95.0,
+        "delay_bc_ms": 81.21,
+        "thp_bc_mbps": 3.68,
+        "n_baixa_carga": 19,
+        "decision": "apply"
+      }
+    ],
+    "evaluated_at": "2026-08-26T21:54:00.268747+00:00"
+  },
+  "policy": {
+    "actuation": {
+      "mode": "emulate",
+      "real": {}
+    },
+    "lab_context": {
+      "tema": "G6 — Economia de energia (intenção simulada)",
+      "kpi": "KPI 1 — Fração de tempo em baixa carga (FBC)",
+      "kqi": "KQI 2 — Vazão/delay médios nas janelas de baixa carga",
+      "fases_candidatas": [
+        "baseline",
+        "recovery"
+      ],
+      "fases_excluidas": [
+        "stress"
+      ]
+    },
+    "policy_data": {
+      "energySavingIntent": {
+        "scope": {
+          "cellId": "cell-lab",
+          "runId": "ue-tp-20260804-174422"
+        },
+        "candidatePhases": [
+          "baseline",
+          "recovery"
+        ],
+        "excludedPhases": [
+          "stress"
+        ],
+        "rationale": "FBC >= 90% e delay dentro das janelas de baixa carga <= 161.98 ms (referência: delay médio da fase stress)"
+      }
+    },
+    "policy_id": "g6-energy-saving-ue-tp-20260804-174422",
+    "policytype_id": "energy-saving-intent-v1",
+    "ric_id": "ric-oran",
+    "service_id": "g6-energy-saving-rapp"
+  }
+}
